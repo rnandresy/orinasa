@@ -1,0 +1,25 @@
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Configuration Firebase propre a chaque projet : a telecharger depuis la console Firebase.
+app/google-services.json
+# Fichiers de l editeur et du compilateur Kotlin
+.idea/
+.kotlin/
+build/
+# Cles de signature
+*.jks
+*.keystore
