@@ -1,26 +1,26 @@
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.plugin.compose")   // ← plugin requis Kotlin 2.0+
-    id("com.google.gms.google-services")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.services)
 }
 
 android {
-    namespace  = "com.orinasa.app"
-    compileSdk = 35
+    namespace = "com.orinasa.app"
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.orinasa.app"
-        minSdk        = 26
-        targetSdk     = 35
-        versionCode   = 1
-        versionName   = "1.0.0"
+        minSdk = 26
+        // Google Play exige l'API 36 pour toute mise à jour depuis le 31 août 2026.
+        targetSdk = 36
+        versionCode = 1
+        versionName = "1.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            isMinifyEnabled   = true
+            isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -32,17 +32,14 @@ android {
         }
     }
 
+    // Avec Kotlin intégré (AGP 9), la cible JVM de Kotlin suit
+    // targetCompatibility : l'ancien bloc kotlinOptions n'a plus lieu d'être.
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions { jvmTarget = "17" }
-
     buildFeatures { compose = true }
-
-    // ← composeOptions n'est plus nécessaire avec Kotlin 2.0
-    // Le plugin kotlin.plugin.compose gère ça automatiquement
 
     packaging {
         resources {
@@ -59,44 +56,40 @@ android {
 }
 
 dependencies {
-    implementation("com.google.android.material:material:1.12.0")
+    implementation(libs.material)
 
-    // ── Compose BOM ───────────────────────────────────────────────────────────
-    val composeBom = platform("androidx.compose:compose-bom:2024.11.00")
-    implementation(composeBom)
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
-    implementation("androidx.compose.material:material-icons-extended")
-    debugImplementation("androidx.compose.ui:ui-tooling")
+    // ── Compose ──────────────────────────────────────────────────────────────
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.material.icons.extended)
+    debugImplementation(libs.androidx.compose.ui.tooling)
 
     // ── AndroidX ─────────────────────────────────────────────────────────────
-    implementation("androidx.core:core-ktx:1.15.0")
-    implementation("androidx.activity:activity-compose:1.9.3")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
-    implementation("androidx.navigation:navigation-compose:2.8.5")
-    implementation("androidx.datastore:datastore-preferences:1.1.1")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.datastore.preferences)
 
-    // ── Firebase ──────────────────────────────────────────────────────────────
-    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
-    implementation("com.google.firebase:firebase-auth-ktx")
-    implementation("com.google.firebase:firebase-firestore-ktx")
-    implementation("com.google.firebase:firebase-messaging-ktx")
+    // ── Firebase ─────────────────────────────────────────────────────────────
+    // Modules principaux : les modules -ktx ont été retirés du BoM 34.
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.messaging)
 
-    // ── Image ─────────────────────────────────────────────────────────────────
-    implementation("io.coil-kt:coil-compose:2.7.0")
+    // ── Images ───────────────────────────────────────────────────────────────
+    implementation(libs.coil.compose)
 
-    // ── QR Code ───────────────────────────────────────────────────────────────
-    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
-    implementation("com.google.zxing:core:3.5.3")
+    // ── Coroutines ───────────────────────────────────────────────────────────
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.play.services)
 
-    // ── Coroutines ────────────────────────────────────────────────────────────
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.9.0")
-
-    // ── Tests ─────────────────────────────────────────────────────────────────
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    // ── Tests ────────────────────────────────────────────────────────────────
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 }
